@@ -21,8 +21,10 @@
       gap: 20px;
       align-items: flex-start;
       justify-content: center;
-      min-height: 100vh;
-      background:
+        min-height: 100vh;
+        /* leave space for fixed footer */
+        padding-bottom: 120px;
+        background:
         radial-gradient(1200px 400px at 10% 10%, rgba(255,240,200,0.03), transparent),
         linear-gradient(180deg, #0b0b0b 0%, #141414 40%, #0b0b0b 100%);
       color: #fff;
@@ -126,6 +128,24 @@
       box-shadow: inset 0 -6px 16px rgba(0,0,0,0.6);
     }
 
+    /* fixed footer at bottom of viewport */
+    .footer-fixed{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      height:96px;
+      background: linear-gradient(180deg, rgba(10,10,10,0.95), rgba(20,20,20,0.95));
+      color: rgba(255,255,255,0.9);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:4000;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+    }
+
     .coin-slot{ width:100%; height:46px; margin-top:6px; background:linear-gradient(180deg,#222,#101010); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#ccc; border:1px solid rgba(255,255,255,0.03); }
 
     .chute{ width:100%; height:54px; margin-top:8px; background:linear-gradient(180deg,#111,#080808); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#ddd; border:1px solid rgba(255,255,255,0.03); position:relative; }
@@ -196,12 +216,6 @@
 </head>
 <body>
   <div>
-  
-  <!-- Footnote -->
-  <footer style="width:100%;text-align:center;margin-top:18px;color:rgba(255,255,255,0.7);font-size:12px;">
-    <div style="max-width:980px;margin:8px auto 6px;">© 2025 M's Luxury Bags. All rights reserved.</div>
-    <div style="max-width:980px;margin:6px auto 40px;">※ Demo only — UI and background assets are stylised for presentation. Replace emoji with product images for production. No trademark or brand logos are used in this demo.</div>
-  </footer>
     <h1>M's Luxury Bags</h1>
     <div class="machine">
       <div class="frame">
@@ -632,5 +646,18 @@
     requestAnimationFrame(animateBags);
   </script>
 
-</body>
-</html>
+    <!-- Fixed Footnote -->
+    <footer class="footer-fixed">
+      <div style="max-width:980px;margin:2px auto 4px;font-weight:700;">© <span id="year">2025</span> 馬西里 (M's Luxury Bags). All rights reserved.</div>
+      <div style="max-width:980px;margin:4px auto 4px;font-size:12px;">禁止未經授權之複製、轉載或商業使用。※ Demo only — UI and background assets are stylised for presentation. No trademark or brand logos are used in this demo.</div>
+    </footer>
+    <script>
+      // auto update year in footer
+      (function(){
+        const y = new Date().getFullYear();
+        const el = document.getElementById('year'); if(el) el.textContent = y;
+      })();
+    </script>
+
+  </body>
+  </html>
