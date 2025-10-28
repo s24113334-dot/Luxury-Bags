@@ -5,183 +5,180 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M's Luxury Bags Vending Machine</title>
   <style>
+    /* Base */
+    :root{
+      --gold: #ffd700;
+      --metal-dark: #0f1416;
+      --metal-mid: #2b2f31;
+      --glass: rgba(255,255,255,0.06);
+    }
+
+    html,body{height:100%;}
     body {
       font-family: 'Poppins', sans-serif;
-      background: #1e1e1e;
-      color: #fff;
       margin: 0;
-      padding: 0;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
       gap: 20px;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      background:
+        radial-gradient(1200px 400px at 10% 10%, rgba(255,240,200,0.03), transparent),
+        linear-gradient(180deg, #0b0b0b 0%, #141414 40%, #0b0b0b 100%);
+      color: #fff;
+      padding: 30px;
     }
 
+    /* Luxury patterned header */
     h1 {
-      color: #ffd700;
-      font-size: 2.5em;
-      text-shadow: 2px 2px 8px #000;
+      color: var(--gold);
+      font-size: 2.2rem;
       text-align: center;
       width: 100%;
-      margin-top: 20px;
+      text-shadow: 0 4px 18px rgba(0,0,0,0.8);
+      letter-spacing: 1px;
+      margin: 6px 0 18px;
     }
 
+    /* Container for machine (enlarged) */
     .machine {
+      width: 760px; /* increased */
+      background: linear-gradient(180deg, #1b1b1b 0%, #0f0f0f 100%);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.75), inset 0 2px 8px rgba(255,255,255,0.02);
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: #2b2b2b;
-      border: 3px solid #444;
-      border-radius: 20px;
-      padding: 20px;
-      width: 450px;
       position: relative;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      border: 2px solid rgba(255,215,0,0.05);
     }
 
-    .products {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
+    /* Machine face: metallic frame + glass cabinet */
+    .machine .frame{
       width: 100%;
-    }
-
-    .product {
-      border: 2px solid #666;
-      border-radius: 15px;
-      padding: 10px;
-      text-align: center;
-      background: #3a3a3a;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
-      cursor: pointer;
-    }
-
-    .product:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #ffd700;
-    }
-
-    #insert-area {
-      width: 200px;
-      height: 80px;
-      border: 2px dashed #666;
-      margin: 15px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      color: #ffd700;
-      font-weight: bold;
-      background: #222;
-    }
-
-    .coins {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .coin {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #c0a060, #8b6b30);
-      color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      cursor: grab;
-      box-shadow: inset 0 0 3px #fff, 0 2px 4px rgba(0,0,0,0.6);
-      user-select: none;
-    }
-
-    .change {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #ffd700;
-    }
-
-    .receipt {
-      margin-top: 15px;
-      padding: 10px;
-      background: #333;
-      border: 1px dashed #666;
+      background: linear-gradient(180deg,#222428 0%, #0a0a0a 100%);
       border-radius: 10px;
-      width: 90%;
-      text-align: left;
-      display: none;
-      max-height: 200px;
-      overflow-y: auto;
+      padding: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
     }
 
-    .receipt h3 {
-      text-align: center;
-      color: #ffd700;
-    }
-
-    .reset-btn, .refill-btn {
-      margin-top: 10px;
-      padding: 8px 15px;
-      border: none;
+    /* left: cabinet (glass) */
+    .cabinet {
+      width: 520px; /* widened */
+      height: 480px; /* increased height to fit larger items and claw */
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
       border-radius: 8px;
-      background-color: #555;
-      color: #ffd700;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(255,255,255,0.02);
+      border: 2px solid rgba(255,255,255,0.04);
+      display:block;
     }
 
-    .reset-btn:hover, .refill-btn:hover {
-      background-color: #777;
+    /* glass reflections */
+    .cabinet::before{
+      content:'';
+      position:absolute; left:0; top:0; right:0; bottom:0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 30%), linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.15));
+      pointer-events:none;
     }
 
-    /* Log box */
-    .log-box {
-      background: #2a2a2a;
-      border: 2px solid #444;
-      border-radius: 15px;
-      width: 300px;
-      max-height: 600px;
-      padding: 15px;
-      overflow-y: auto;
-      color: #fff;
-      font-size: 0.9em;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    /* shelf grid where products sit */
+    .shelf{
+      position:absolute; left:18px; right:18px; top:18px; bottom:140px; /* more bottom space for larger box */
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 1fr;
+      gap:14px;
+      padding:12px;
+      align-items:end;
     }
 
-    .log-box h3 {
-      text-align: center;
-      color: #ffd700;
-      margin-top: 0;
+    .item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.18));
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      font-size:16px; color:#fff; padding:12px; cursor:pointer; position:relative;
+      transition: transform 0.28s ease, box-shadow 0.25s ease, opacity 0.25s;
+      user-select:none;
+      min-height:120px; /* larger items */
     }
 
-    .log-entry {
-      margin-bottom: 5px;
-      padding: 3px 5px;
-      border-bottom: 1px solid #444;
+    .item:hover{ transform: translateY(-6px) scale(1.03); box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+    .item.locked{ opacity:0.35; cursor:not-allowed; transform:none; }
+
+    /* right: control panel */
+    .panel{
+      width:140px; display:flex; flex-direction:column; gap:8px; align-items:center;
     }
 
-    .success { color: #4CAF50; }
-    .warning { color: #FFD700; }
-    .error { color: #FF4C4C; }
-
-    /* Floating bubbles */
-    .bubble {
-      position: absolute;
-      bottom: -100px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 50%;
-      animation: rise 12s infinite ease-in;
+    .display {
+      width:100%; height:56px; background: linear-gradient(180deg,#0b0b0b,#131313);
+      border-radius:8px; border:2px solid rgba(255,215,0,0.07); display:flex; align-items:center; justify-content:center; color:var(--gold); font-weight:700; font-size:1rem;
+      box-shadow: inset 0 -6px 16px rgba(0,0,0,0.6);
     }
 
-    @keyframes rise {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+    .coin-slot{ width:100%; height:46px; margin-top:6px; background:linear-gradient(180deg,#222,#101010); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#ccc; border:1px solid rgba(255,255,255,0.03); }
+
+    .chute{ width:100%; height:54px; margin-top:8px; background:linear-gradient(180deg,#111,#080808); border-radius:6px; display:flex; align-items:center; justify-content:center; color:#ddd; border:1px solid rgba(255,255,255,0.03); position:relative; }
+
+    .coins { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:12px; }
+    .coin{ width:46px; height:46px; border-radius:50%; background: radial-gradient(circle,#f6e0a1,#b38737); display:flex; align-items:center; justify-content:center; color:#111; font-weight:700; cursor:grab; box-shadow: 0 6px 14px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,255,255,0.35); }
+
+    .change{ color:var(--gold); font-weight:700; margin-top:8px; }
+
+    .receipt{ width:100%; margin-top:10px; background:#080808; border-radius:8px; padding:10px; color:#eee; display:none; }
+
+    .reset-btn, .refill-btn{ margin-top:10px; padding:8px 10px; border-radius:6px; background:#222; color:var(--gold); border:1px solid rgba(255,215,0,0.06); cursor:pointer; }
+
+    .log-box{ width:340px; background:linear-gradient(180deg,#121212,#0b0b0b); padding:14px; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,0.6); max-height:640px; overflow:auto; }
+
+    .log-box h3{ color:var(--gold); margin-top:0; text-align:center; }
+
+    .log-entry{ border-bottom:1px solid rgba(255,255,255,0.03); padding:6px 4px; font-size:0.9rem; }
+
+    /* Claw (visual) */
+    .claw{
+      position:absolute; left:50%; top:10px; width:110px; height:140px; transform:translateX(-50%);
+      pointer-events:none; z-index:120; transition: transform 0.35s ease;
+    }
+    /* longer arm for bigger cabinet */
+    .claw .arm{ width:10px; height:100px; background:linear-gradient(180deg,#8a8a8a,#111); position:absolute; left:50%; transform:translateX(-50%); top:0; border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,0.6); }
+    .claw .hook{ position:absolute; left:50%; transform:translateX(-50%); top:86px; width:92px; height:60px; background:linear-gradient(180deg,#bdbdbd,#3a3a3a); border-radius:6px; display:flex; align-items:flex-end; justify-content:space-around; padding-bottom:6px; box-shadow: inset 0 -6px 12px rgba(0,0,0,0.35); }
+    /* eagle-talons style prongs - initial spread */
+    .claw .prong{ width:18px; height:56px; background:linear-gradient(180deg,#f7f5f2,#9d8b6a); border-radius:6px; transform-origin:top center; box-shadow:0 6px 14px rgba(0,0,0,0.5); }
+    .claw .prong:nth-child(1){ transform: rotate(-40deg); }
+    .claw .prong:nth-child(2){ transform: rotate(0deg); }
+    .claw .prong:nth-child(3){ transform: rotate(40deg); }
+    /* product fly-to-chute animation */
+    .flying{ position:fixed; z-index:1000; transition: transform 0.9s cubic-bezier(.2,.9,.2,1), opacity 0.4s; }
+
+    /* floating decorative elements */
+    .bubble{ position:absolute; bottom:-120px; background:rgba(255,255,255,0.03); border-radius:50%; animation:rise 18s infinite; }
+    @keyframes rise{ 0%{transform:translateY(0)} 100%{transform:translateY(-120vh); opacity:0} }
+
+    /* Collection box inside cabinet */
+  .box{ position:absolute; left:50%; transform:translateX(-50%); bottom:12px; width:300px; height:110px; border-radius:10px; overflow:hidden; border:3px solid rgba(0,0,0,0.45); z-index:60; }
+  .box-inner{ width:100%; height:100%; background: linear-gradient(180deg,#47301a,#2b1609); box-shadow: inset 0 -12px 36px rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; color:#e6c89a; font-size:15px; }
+
+    /* luxury patterned page background (monogram-like, non-branded) */
+    body{
+      background-image:
+        radial-gradient(circle at 8% 10%, rgba(255,255,255,0.02) 0, rgba(255,255,255,0) 20%),
+        repeating-linear-gradient(45deg, rgba(255,215,150,0.02) 0 6px, rgba(0,0,0,0) 6px 12px),
+        linear-gradient(180deg,#5a3b20 0%, #3b2a1a 45%, #29180f 100%);
+      background-blend-mode:overlay,multiply,normal;
+      background-size: auto, 12px 12px, cover;
+    }
+
+    /* subtle decorative monogram dots/flowers using pseudo element */
+    body::after{
+      content:''; position:fixed; inset:0; pointer-events:none; opacity:0.06; background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.06) 0, rgba(255,255,255,0) 12%), radial-gradient(circle at 40% 60%, rgba(255,255,255,0.06) 0, rgba(255,255,255,0) 12%); background-size: 80px 80px; mix-blend-mode:soft-light;
     }
   </style>
 </head>
@@ -189,14 +186,36 @@
   <div>
     <h1>M's Luxury Bags</h1>
     <div class="machine">
-      <div class="products"></div>
-      <div id="insert-area">Drop Coins Here</div>
-      <div class="coins"></div>
-      <div class="change">Inserted: $<span id="inserted">0</span></div>
-      <div class="change">Change: $<span id="change">0</span></div>
+      <div class="frame">
+        <div class="cabinet">
+          <div class="claw" id="claw">
+            <div class="arm"></div>
+            <div class="hook">
+              <div class="prong"></div>
+              <div class="prong"></div>
+              <div class="prong"></div>
+            </div>
+          </div>
+          <div class="shelf products"></div>
+          <!-- visible collection box inside cabinet where items are dropped -->
+          <div class="box" id="box" aria-hidden="true">
+            <div class="box-inner"></div>
+          </div>
+          <!-- small label inside glass -->
+          <div style="position:absolute;left:0;right:0;bottom:6px;text-align:center;color:rgba(255,255,255,0.6);font-size:12px;">Collection Box</div>
+        </div>
+
+        <div class="panel">
+          <div class="display">Inserted: $<span id="inserted">0</span></div>
+          <div class="coin-slot" id="insert-area">Drop / Click Coins</div>
+          <div class="coins" id="coins"></div>
+          <div class="chute">Change: $<span id="change">0</span></div>
+          <button class="reset-btn" id="reset">Reset</button>
+          <button class="refill-btn" id="refill">Refill</button>
+        </div>
+      </div>
+
       <div class="receipt" id="receipt"></div>
-      <button class="reset-btn" id="reset">Buy Another Bag</button>
-      <button class="refill-btn" id="refill">Refill Stock & Coins</button>
     </div>
   </div>
 
@@ -216,7 +235,7 @@
     const coinInventory = { 500: 10, 1000: 10, 2000: 5 };
 
     const productContainer = document.querySelector('.products');
-    const coinContainer = document.querySelector('.coins');
+    const coinContainer = document.getElementById('coins');
     const insertArea = document.getElementById('insert-area');
     const insertedDisplay = document.getElementById('inserted');
     const changeDisplay = document.getElementById('change');
@@ -224,8 +243,11 @@
     const resetBtn = document.getElementById('reset');
     const refillBtn = document.getElementById('refill');
     const logBox = document.getElementById('logBox');
+    const claw = document.getElementById('claw');
+    const cabinet = document.querySelector('.cabinet');
 
     let inserted = 0;
+    let busy = false; // prevents overlapping grabs
 
     function logMessage(msg, type='success') {
       const div = document.createElement('div');
@@ -239,10 +261,10 @@
       productContainer.innerHTML = '';
       products.forEach((p, i) => {
         const div = document.createElement('div');
-        div.classList.add('product');
+        div.classList.add('item');
         div.dataset.index = i;
-        div.innerHTML = `${p.icon}<br>${p.name} — $${p.price} (${p.stock} left)`;
-        div.style.opacity = p.stock > 0 ? 1 : 0.4;
+        div.innerHTML = `<div style="font-size:28px">${p.icon}</div><div style="font-size:12px;margin-top:6px">${p.name}</div><div style="font-size:12px;color:#ddd">$${p.price}</div><div style="font-size:11px;color:#bbb">${p.stock} left</div>`;
+        if (p.stock <= 0) div.classList.add('locked');
         productContainer.appendChild(div);
       });
     }
@@ -255,8 +277,32 @@
         div.dataset.value = value;
         div.textContent = '$' + value;
         div.draggable = true;
+        // click to insert quickly
+        div.addEventListener('click', e => {
+          insertCoin(Number(div.dataset.value));
+          animateCoinClick(div);
+        });
         coinContainer.appendChild(div);
       });
+    }
+
+    function animateCoinClick(el){
+      // simple scale effect
+      el.style.transform = 'scale(0.9)';
+      setTimeout(()=> el.style.transform = '', 180);
+    }
+
+    function insertCoin(value){
+      if (coinInventory[value] > 0) {
+        inserted += value;
+        coinInventory[value]--;
+        insertedDisplay.textContent = inserted;
+        logMessage(`Inserted $${value}`, 'success');
+      } else {
+        logMessage(`Coin $${value} unavailable!`, 'error');
+        alert('Coin machine out of this coin!');
+      }
+      renderCoins();
     }
 
     renderProducts();
@@ -272,20 +318,14 @@
     insertArea.addEventListener('drop', e => {
       e.preventDefault();
       const value = Number(e.dataTransfer.getData('value'));
-      if (coinInventory[value] > 0) {
-        inserted += value;
-        coinInventory[value]--;
-        insertedDisplay.textContent = inserted;
-        logMessage(`Inserted $${value}`, 'success');
-      } else {
-        logMessage(`Coin $${value} unavailable!`, 'error');
-        alert('Coin machine out of this coin!');
-      }
+      insertCoin(value);
     });
 
+    // product click triggers claw sequence
     productContainer.addEventListener('click', e => {
-      if (!e.target.classList.contains('product')) return;
-      const index = e.target.dataset.index;
+      const item = e.target.closest('.item');
+      if (!item) return;
+      const index = Number(item.dataset.index);
       const product = products[index];
 
       if (product.stock <= 0) {
@@ -294,29 +334,144 @@
         return;
       }
 
+      if (busy) { logMessage('Machine busy', 'warning'); return; }
+
       if (inserted >= product.price) {
+        busy = true;
         const change = inserted - product.price;
         changeDisplay.textContent = change;
-        product.stock--;
-        receipt.style.display = 'block';
-        const now = new Date();
-        receipt.innerHTML = `<h3>🧾 Purchase Receipt</h3>
-          <p><strong>Item:</strong> ${product.name}</p>
-          <p><strong>Price:</strong> $${product.price}</p>
-          <p><strong>Inserted:</strong> $${inserted}</p>
-          <p><strong>Change:</strong> $${change}</p>
-          <hr>
-          <p><strong>Date:</strong> ${now.toLocaleDateString()}</p>
-          <p><strong>Time:</strong> ${now.toLocaleTimeString()}</p>`;
-        logMessage(`Purchased ${product.name} for $${product.price}, change $${change}`, 'success');
-        inserted = 0;
-        insertedDisplay.textContent = 0;
-        renderProducts();
+        logMessage(`Starting claw for ${product.name}`, 'success');
+        startClawGrab(index).then(success => {
+          if (success) {
+            product.stock--;
+            showReceipt(product, product.price, inserted, change);
+            logMessage(`Purchased ${product.name} for $${product.price}, change $${change}`, 'success');
+          } else {
+            logMessage(`Claw failed to grab ${product.name}`, 'warning');
+            alert('Claw failed to catch it — try again (no charge)');
+          }
+          inserted = 0;
+          insertedDisplay.textContent = 0;
+          renderProducts();
+          busy = false;
+        });
       } else {
         logMessage(`Not enough money for ${product.name}`, 'warning');
         alert('Not enough money! Insert more coins.');
       }
     });
+
+    function startClawGrab(index){
+      return new Promise(resolve => {
+        const productEls = Array.from(document.querySelectorAll('.item'));
+        const target = productEls[index];
+        const cabinetRect = cabinet.getBoundingClientRect();
+        const clawRect = claw.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+
+        // compute center offsets relative to claw origin
+        const cabinetCenterX = cabinetRect.left + cabinetRect.width/2;
+        const targetCenterX = targetRect.left + targetRect.width/2;
+        const dx = targetCenterX - cabinetCenterX;
+
+        // approximate drop amount (from claw top to target center)
+        const dropY = (targetRect.top + targetRect.height/2) - (clawRect.top + clawRect.height/2);
+
+        // move claw horizontally
+        claw.style.transition = 'transform 0.65s cubic-bezier(.2,.9,.2,1)';
+        claw.style.transform = `translate(${dx}px, 0px)`;
+
+        // after horizontal move, drop
+        setTimeout(()=>{
+          claw.style.transition = 'transform 0.55s cubic-bezier(.2,.9,.2,1)';
+          claw.style.transform = `translate(${dx}px, ${dropY}px)`;
+        }, 700);
+
+        // simulate grabbing: animate prongs closing (rotate toward center)
+        setTimeout(()=>{
+          const prongs = Array.from(claw.querySelectorAll('.prong'));
+          const closeAngles = [-8, 0, 8];
+          prongs.forEach((p,i)=> p.style.transform = `rotate(${closeAngles[i]}deg)`);
+        }, 1300);
+
+        // lift back up
+        setTimeout(()=>{
+          claw.style.transition = 'transform 0.6s cubic-bezier(.2,.9,.2,1)';
+          claw.style.transform = `translate(${dx}px, 0px)`;
+        }, 1700);
+
+        // move back to center and open prongs then drop item to box
+        setTimeout(()=>{
+          claw.style.transition = 'transform 0.7s cubic-bezier(.2,.9,.2,1)';
+          claw.style.transform = `translate(0px, 0px)`;
+        }, 2400);
+
+        // reset prongs to open position shortly after returning
+        setTimeout(()=>{
+          const prongs = Array.from(claw.querySelectorAll('.prong'));
+          const openAngles = [-40, 0, 40];
+          prongs.forEach((p,i)=> p.style.transform = `rotate(${openAngles[i]}deg)`);
+        }, 2700);
+
+        // animate item: clone, make it look hooked then fly to collection box at ~2.6s
+        setTimeout(()=>{
+          const cloned = target.cloneNode(true);
+          cloned.classList.add('flying');
+          const rect = target.getBoundingClientRect();
+          cloned.style.left = rect.left + 'px';
+          cloned.style.top = rect.top + 'px';
+          cloned.style.width = rect.width + 'px';
+          cloned.style.height = rect.height + 'px';
+          cloned.style.position = 'fixed';
+          cloned.style.zIndex = 9999;
+          document.body.appendChild(cloned);
+
+          // first, a short lift to look attached to claw
+          const clawRectNow = claw.getBoundingClientRect();
+          const attachX = clawRectNow.left + clawRectNow.width/2 - rect.width/2;
+          const attachY = clawRectNow.top + clawRectNow.height/2 - rect.height/2 + 8; // slightly below claw
+
+          requestAnimationFrame(()=>{
+            cloned.style.transition = 'transform 0.35s cubic-bezier(.2,.9,.2,1)';
+            cloned.style.transform = `translate(${attachX - rect.left}px, ${attachY - rect.top}px) scale(0.95)`;
+            cloned.style.opacity = '0.98';
+          });
+
+          // then after short delay, fly to box
+          setTimeout(()=>{
+            const box = document.getElementById('box');
+            const boxRect = box.getBoundingClientRect();
+            const destX = boxRect.left + boxRect.width/2 - rect.width/2;
+            const destY = boxRect.top + boxRect.height/2 - rect.height/2;
+
+            cloned.style.transition = 'transform 0.95s cubic-bezier(.2,.9,.2,1), opacity 0.5s';
+            cloned.style.transform = `translate(${destX - rect.left}px, ${destY - rect.top}px) scale(0.75)`;
+            cloned.style.opacity = '0.95';
+
+            setTimeout(()=>{
+              cloned.remove();
+              resolve(true);
+            }, 1100);
+          }, 360);
+        }, 2600);
+
+        // safety fallback: if something goes wrong, resolve false after 4.5s
+        setTimeout(()=>{ if (busy) resolve(false); }, 4500);
+      });
+    }
+
+    function showReceipt(product, price, insertedAmt, change){
+      receipt.style.display = 'block';
+      const now = new Date();
+      receipt.innerHTML = `<h3>🧾 Purchase Receipt</h3>
+        <p><strong>Item:</strong> ${product.name}</p>
+        <p><strong>Price:</strong> $${price}</p>
+        <p><strong>Inserted:</strong> $${insertedAmt}</p>
+        <p><strong>Change:</strong> $${change}</p>
+        <hr>
+        <p><strong>Date:</strong> ${now.toLocaleDateString()}</p>
+        <p><strong>Time:</strong> ${now.toLocaleTimeString()}</p>`;
+    }
 
     resetBtn.addEventListener('click', () => {
       inserted = 0;
@@ -336,7 +491,7 @@
       alert('Stock and coins refilled!');
     });
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 16; i++) {
       const bubble = document.createElement('div');
       const size = Math.random() * 60 + 20;
       bubble.classList.add('bubble');
