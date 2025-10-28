@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M's Luxury Bags Vending Machine</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1e1e1e;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      gap: 20px;
+    }
+
+    h1 {
+      color: #ffd700;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 8px #000;
+      text-align: center;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .machine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #2b2b2b;
+      border: 3px solid #444;
+      border-radius: 20px;
+      padding: 20px;
+      width: 450px;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .product {
+      border: 2px solid #666;
+      border-radius: 15px;
+      padding: 10px;
+      text-align: center;
+      background: #3a3a3a;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+      cursor: pointer;
+    }
+
+    .product:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #ffd700;
+    }
+
+    #insert-area {
+      width: 200px;
+      height: 80px;
+      border: 2px dashed #666;
+      margin: 15px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      color: #ffd700;
+      font-weight: bold;
+      background: #222;
+    }
+
+    .coins {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .coin {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #c0a060, #8b6b30);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: grab;
+      box-shadow: inset 0 0 3px #fff, 0 2px 4px rgba(0,0,0,0.6);
+      user-select: none;
+    }
+
+    .change {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .receipt {
+      margin-top: 15px;
+      padding: 10px;
+      background: #333;
+      border: 1px dashed #666;
+      border-radius: 10px;
+      width: 90%;
+      text-align: left;
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .receipt h3 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    .reset-btn, .refill-btn {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #555;
+      color: #ffd700;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .reset-btn:hover, .refill-btn:hover {
+      background-color: #777;
+    }
+
+    /* Log box */
+    .log-box {
+      background: #2a2a2a;
+      border: 2px solid #444;
+      border-radius: 15px;
+      width: 300px;
+      max-height: 600px;
+      padding: 15px;
+      overflow-y: auto;
+      color: #fff;
+      font-size: 0.9em;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .log-box h3 {
+      text-align: center;
+      color: #ffd700;
+      margin-top: 0;
+    }
+
+    .log-entry {
+      margin-bottom: 5px;
+      padding: 3px 5px;
+      border-bottom: 1px solid #444;
+    }
+
+    .success { color: #4CAF50; }
+    .warning { color: #FFD700; }
+    .error { color: #FF4C4C; }
+
+    /* Floating bubbles */
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      animation: rise 12s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>M's Luxury Bags</h1>
+    <div class="machine">
+      <div class="products"></div>
+      <div id="insert-area">Drop Coins Here</div>
+      <div class="coins"></div>
+      <div class="change">Inserted: $<span id="inserted">0</span></div>
+      <div class="change">Change: $<span id="change">0</span></div>
+      <div class="receipt" id="receipt"></div>
+      <button class="reset-btn" id="reset">Buy Another Bag</button>
+      <button class="refill-btn" id="refill">Refill Stock & Coins</button>
+    </div>
+  </div>
+
+  <div class="log-box" id="logBox">
+    <h3>Machine Log</h3>
+  </div>
+
+  <script>
+    const products = [
+      { name: 'Chanel', price: 3000, stock: 5, icon: '👜' },
+      { name: 'Hermès', price: 5000, stock: 3, icon: '🧳' },
+      { name: 'Coachella', price: 1200, stock: 10, icon: '🎒' },
+      { name: 'C&K', price: 800, stock: 7, icon: '👝' },
+      { name: 'Lacoste', price: 1000, stock: 8, icon: '🛍️' }
+    ];
+
+    const coinInventory = { 500: 10, 1000: 10, 2000: 5 };
+
+    const productContainer = document.querySelector('.products');
+    const coinContainer = document.querySelector('.coins');
+    const insertArea = document.getElementById('insert-area');
+    const insertedDisplay = document.getElementById('inserted');
+    const changeDisplay = document.getElementById('change');
+    const receipt = document.getElementById('receipt');
+    const resetBtn = document.getElementById('reset');
+    const refillBtn = document.getElementById('refill');
+    const logBox = document.getElementById('logBox');
+
+    let inserted = 0;
+
+    function logMessage(msg, type='success') {
+      const div = document.createElement('div');
+      div.classList.add('log-entry', type);
+      div.textContent = `${new Date().toLocaleTimeString()} - ${msg}`;
+      logBox.appendChild(div);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function renderProducts() {
+      productContainer.innerHTML = '';
+      products.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.classList.add('product');
+        div.dataset.index = i;
+        div.innerHTML = `${p.icon}<br>${p.name} — $${p.price} (${p.stock} left)`;
+        div.style.opacity = p.stock > 0 ? 1 : 0.4;
+        productContainer.appendChild(div);
+      });
+    }
+
+    function renderCoins() {
+      coinContainer.innerHTML = '';
+      Object.keys(coinInventory).forEach(value => {
+        const div = document.createElement('div');
+        div.classList.add('coin');
+        div.dataset.value = value;
+        div.textContent = '$' + value;
+        div.draggable = true;
+        coinContainer.appendChild(div);
+      });
+    }
+
+    renderProducts();
+    renderCoins();
+
+    document.addEventListener('dragstart', e => {
+      if (e.target.classList.contains('coin')) {
+        e.dataTransfer.setData('value', e.target.dataset.value);
+      }
+    });
+
+    insertArea.addEventListener('dragover', e => e.preventDefault());
+    insertArea.addEventListener('drop', e => {
+      e.preventDefault();
+      const value = Number(e.dataTransfer.getData('value'));
+      if (coinInventory[value] > 0) {
+        inserted += value;
+        coinInventory[value]--;
+        insertedDisplay.textContent = inserted;
+        logMessage(`Inserted $${value}`, 'success');
+      } else {
+        logMessage(`Coin $${value} unavailable!`, 'error');
+        alert('Coin machine out of this coin!');
+      }
+    });
+
+    productContainer.addEventListener('click', e => {
+      if (!e.target.classList.contains('product')) return;
+      const index = e.target.dataset.index;
+      const product = products[index];
+
+      if (product.stock <= 0) {
+        logMessage(`${product.name} is out of stock`, 'error');
+        alert('Out of stock!');
+        return;
+      }
+
+      if (inserted >= product.price) {
+        const change = inserted - product.price;
+        changeDisplay.textContent = change;
+        product.stock--;
+        receipt.style.display = 'block';
+        const now = new Date();
+        receipt.innerHTML = `<h3>🧾 Purchase Receipt</h3>
+          <p><strong>Item:</strong> ${product.name}</p>
+          <p><strong>Price:</strong> $${product.price}</p>
+          <p><strong>Inserted:</strong> $${inserted}</p>
+          <p><strong>Change:</strong> $${change}</p>
+          <hr>
+          <p><strong>Date:</strong> ${now.toLocaleDateString()}</p>
+          <p><strong>Time:</strong> ${now.toLocaleTimeString()}</p>`;
+        logMessage(`Purchased ${product.name} for $${product.price}, change $${change}`, 'success');
+        inserted = 0;
+        insertedDisplay.textContent = 0;
+        renderProducts();
+      } else {
+        logMessage(`Not enough money for ${product.name}`, 'warning');
+        alert('Not enough money! Insert more coins.');
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      inserted = 0;
+      insertedDisplay.textContent = 0;
+      changeDisplay.textContent = 0;
+      receipt.style.display = 'none';
+      logMessage('Machine reset', 'success');
+      alert('Machine reset! You can now buy another bag.');
+    });
+
+    refillBtn.addEventListener('click', () => {
+      products.forEach(p => p.stock = 10);
+      Object.keys(coinInventory).forEach(c => coinInventory[c] = 10);
+      renderProducts();
+      renderCoins();
+      logMessage('Stock and coins refilled', 'success');
+      alert('Stock and coins refilled!');
+    });
+
+    for (let i = 0; i < 20; i++) {
+      const bubble = document.createElement('div');
+      const size = Math.random() * 60 + 20;
+      bubble.classList.add('bubble');
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.animationDuration = `${8 + Math.random() * 10}s`;
+      bubble.style.animationDelay = `${Math.random() * 5}s`;
+      document.body.appendChild(bubble);
+    }
+  </script>
+
+</body>
+</html>
